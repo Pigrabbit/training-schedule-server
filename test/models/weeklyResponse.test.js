@@ -71,17 +71,15 @@ describe('WeeklyResponse', () => {
       await mongoose.disconnect()
     })
 
-    it('creates weeklyResponse', (done) => {
+    it('creates weeklyResponse', async () => {
       const weeklyResponse = new WeeklyResponse({
         member: 'Jason',
         responses: [absenceResponse, participateResponse]
       })
 
-      weeklyResponse.save()
-        .then(() => {
-          assert(!weeklyResponse.isNew)
-          done()
-        })
+      await weeklyResponse.save()
+
+      assert(!weeklyResponse.isNew)
     })
   })
 

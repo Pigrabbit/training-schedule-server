@@ -110,16 +110,14 @@ describe('User', () => {
       await mongoose.disconnect()
     })
 
-    it('creates user', (done) => {
+    it('creates user', async () => {
       sampleUser.email = sampleEmail
       sampleUser.username = sampleUsername
       sampleUser.password = samplePassword
 
-      sampleUser.save()
-        .then(() => {
-          assert(!sampleUser.isNew)
-          done()
-        })
+      await sampleUser.save()
+
+      assert(!sampleUser.isNew)
     })
   })
 
