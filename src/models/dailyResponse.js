@@ -30,5 +30,9 @@ const DailyResponseSchema = new Schema({
   }
 })
 
+DailyResponseSchema.statics.findByDateAndWillParticipate = function (date, willParticipate) {
+  return this.find({ date: date, willParticipate: willParticipate })
+}
+
 const DailyResponse = mongoose.model('DailyResponse', DailyResponseSchema)
 module.exports = DailyResponse

@@ -22,5 +22,16 @@ WeeklyResponseSchema.statics.findByUsername = function (username) {
   return this.find({ member: username })
 }
 
+WeeklyResponseSchema.statics.findByDateAndWillParticipate = function (date, willParticipate) {
+  return this.aggregate([{
+    $unwind: '$responses'
+  }, {
+    $match: {
+      'responses.date': date,
+      'responses.willParticipate': willParticipate
+    }
+  }])
+}
+
 const WeeklyResponse = mongoose.model('WeeklyResponse', WeeklyResponseSchema)
 module.exports = WeeklyResponse

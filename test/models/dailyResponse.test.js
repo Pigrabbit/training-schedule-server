@@ -1,6 +1,9 @@
 const DailyResponse = require('../../src/models/dailyResponse')
 const { assert } = require('chai')
 
+const mongoose = require('mongoose')
+mongoose.Promise = global.Promise
+
 describe('Daily response', () => {
   describe('#from and #to', () => {
     it('are required if willParticipate is true', () => {
@@ -31,7 +34,7 @@ describe('Daily response', () => {
   describe('#reasonOfAbsence', () => {
     it('is required when willParticipate is false', () => {
       const dailyResponse = new DailyResponse({
-        date: '20xx-xx-xx',
+        date: '2019-07-12',
         willParticipate: false
       })
 

@@ -25,15 +25,14 @@ describe('WeeklyResponse', () => {
   })
 
   describe('#member', () => {
-    it('is required', (done) => {
+    it('is required', async () => {
       const weeklyResponse = new WeeklyResponse({
         responses: [absenceResponse, participateResponse]
       })
 
-      const error = weeklyResponse.validateSync()
+      const error = await weeklyResponse.validateSync()
 
       assert.strictEqual(error.errors.member.message, 'Path `member` is required.')
-      done()
     })
   })
 
@@ -104,6 +103,31 @@ describe('WeeklyResponse', () => {
       const stored = await WeeklyResponse.findByUsername(memberName)
 
       assert.strictEqual(memberName, stored[0].member)
+    })
+
+    it('is able to find member with date and willParticipate value of response of single day', async () => {
+      const weeklyResponseOfAnna = new WeeklyResponse({
+        member: 'Anna',
+        responses: [participateResponse, absenceResponse]
+      })
+
+      const weeklyResponseOfBen = new WeeklyResponse({
+        member: 'Ben',
+        responses: [{
+          date: '2019-07-12',
+          willParticipate: true,
+          from: '17:00',
+          to: '20:00'
+        }, absenceResponse]
+      })
+
+      await weeklyResponseOfAnna.save()
+      await weeklyResponseOfBen.save()
+
+      const stored = await WeeklyResponse.findByDateAndWillParticipate('2019-07-12', true)
+
+      assert.include(stored[0], { member: 'Anna' })
+      assert.include(stored[1], { member: 'Ben' })
     })
   })
 })
