@@ -140,7 +140,7 @@ describe('User', () => {
 
       await user.save()
 
-      const stored = await User.findOne({ 'username': sampleUsername })
+      const stored = await User.findByUsername(sampleUsername)
 
       assert.strictEqual(sampleUsername, stored.username)
     })

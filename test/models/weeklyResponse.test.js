@@ -84,12 +84,12 @@ describe('WeeklyResponse', () => {
   })
 
   describe('reading document from collection', () => {
-    before(async () => {
+    beforeEach(async () => {
       await mongoose.connect(databaseURL, options)
       await mongoose.connection.db.dropDatabase()
     })
 
-    after(async () => {
+    afterEach(async () => {
       await mongoose.disconnect()
     })
 
@@ -101,9 +101,9 @@ describe('WeeklyResponse', () => {
       })
       await weeklyResponse.save()
 
-      const stored = await WeeklyResponse.findOne({ 'member': memberName })
+      const stored = await WeeklyResponse.findByUsername(memberName)
 
-      assert.strictEqual(memberName, stored.member)
+      assert.strictEqual(memberName, stored[0].member)
     })
   })
 })

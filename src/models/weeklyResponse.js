@@ -18,5 +18,9 @@ const WeeklyResponseSchema = new Schema({
   }
 })
 
+WeeklyResponseSchema.statics.findByUsername = function (username) {
+  return this.find({ member: username })
+}
+
 const WeeklyResponse = mongoose.model('WeeklyResponse', WeeklyResponseSchema)
 module.exports = WeeklyResponse
