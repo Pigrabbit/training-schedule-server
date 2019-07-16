@@ -130,4 +130,29 @@ describe('WeeklyResponse', () => {
       assert.include(stored[1], { member: 'Ben' })
     })
   })
+
+  describe('deleting document from collection', () => {
+    beforeEach(async () => {
+      await mongoose.connect(databaseURL, options)
+      await mongoose.connection.db.dropDatabase()
+    })
+
+    afterEach(async () => {
+      await mongoose.disconnect()
+    })
+
+    it('is able to delete the latest weeklyResponse by username', async () => {
+      const weeklyResponse = new WeeklyResponse({
+        member: 'Jinny',
+        responses: [participateResponse, absenceResponse]
+      })
+      await weeklyResponse.save()
+
+      await WeeklyResponse.findOneAndDelete({ member: 'Jinny' })
+
+      const stored = await WeeklyResponse.findByUsername('Jinny')
+
+      assert.isEmpty(stored)
+    })
+  })
 })
