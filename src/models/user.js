@@ -36,8 +36,24 @@ const UserSchema = new Schema({
   }
 })
 
-UserSchema.statics.findByUsername = function(username) {
+UserSchema.statics.findByUsername = function (username) {
   return this.findOne({ 'username': username })
+}
+
+UserSchema.statics.updateEmail = function (username, newEmail) {
+  const query = { username: username }
+  const update = { email: newEmail }
+  const option = { upsert: false }
+
+  return this.findOneAndUpdate(query, update, option)
+}
+
+UserSchema.statics.updatePassword = function (username, newPassword) {
+  const query = { username: username }
+  const update = { password: newPassword }
+  const option = { upsert: false }
+
+  return this.findOneAndUpdate(query, update, option)
 }
 
 const User = mongoose.model('User', UserSchema)

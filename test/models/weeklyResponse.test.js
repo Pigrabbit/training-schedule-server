@@ -135,6 +135,13 @@ describe('WeeklyResponse', () => {
     beforeEach(async () => {
       await mongoose.connect(databaseURL, options)
       await mongoose.connection.db.dropDatabase()
+
+      const weeklyResponse = new WeeklyResponse({
+        member: 'Jinny',
+        responses: [participateResponse, absenceResponse]
+      })
+
+      await weeklyResponse.save()
     })
 
     afterEach(async () => {
@@ -142,12 +149,6 @@ describe('WeeklyResponse', () => {
     })
 
     it('is able to delete the latest weeklyResponse by username', async () => {
-      const weeklyResponse = new WeeklyResponse({
-        member: 'Jinny',
-        responses: [participateResponse, absenceResponse]
-      })
-      await weeklyResponse.save()
-
       await WeeklyResponse.findOneAndDelete({ member: 'Jinny' })
 
       const stored = await WeeklyResponse.findByUsername('Jinny')

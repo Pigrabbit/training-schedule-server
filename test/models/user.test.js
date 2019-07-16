@@ -122,16 +122,10 @@ describe('User', () => {
   })
 
   describe('reading document from collection', () => {
-    before(async () => {
+    beforeEach(async () => {
       await mongoose.connect(databaseURL, options)
       await mongoose.connection.db.dropDatabase()
-    })
 
-    after(async () => {
-      await mongoose.disconnect()
-    })
-
-    it('is able to get single user by username from collection', async () => {
       const user = new User({
         email: sampleEmail,
         username: sampleUsername,
@@ -139,10 +133,80 @@ describe('User', () => {
       })
 
       await user.save()
+    })
 
+    afterEach(async () => {
+      await mongoose.disconnect()
+    })
+
+    it('is able to get single user by username from collection', async () => {
       const stored = await User.findByUsername(sampleUsername)
 
       assert.strictEqual(sampleUsername, stored.username)
+    })
+  })
+
+  describe('updating document from collection', () => {
+    beforeEach(async () => {
+      await mongoose.connect(databaseURL, options)
+      await mongoose.connection.db.dropDatabase()
+
+      const user = new User({
+        email: sampleEmail,
+        username: sampleUsername,
+        password: samplePassword
+      })
+
+      await user.save()
+    })
+
+    afterEach(async () => {
+      await mongoose.disconnect()
+    })
+
+    it('is able to update user email with username', async () => {
+      const newEmail = 'terry@newemail.com'
+      await User.updateEmail(sampleUsername, newEmail)
+
+      const updated = await User.findByUsername(sampleUsername)
+
+      assert.strictEqual(updated.email, newEmail)
+    })
+
+    it('is able to update password with username', async () => {
+      const newPassword = '0101010101'
+      await User.updatePassword(sampleUsername, newPassword)
+
+      const updated = await User.findByUsername(sampleUsername)
+
+      assert.strictEqual(updated.password, newPassword)
+    })
+  })
+
+  describe('deleting document from collection', () => {
+    beforeEach(async () => {
+      await mongoose.connect(databaseURL, options)
+      await mongoose.connection.db.dropDatabase()
+
+      const user = new User({
+        email: sampleEmail,
+        username: sampleUsername,
+        password: samplePassword
+      })
+
+      await user.save()
+    })
+
+    afterEach(async () => {
+      await mongoose.disconnect()
+    })
+
+    it('is able to delete user with username', async () => {
+      await User.findOneAndDelete({ username: sampleUsername })
+
+      const stored = await User.findOne({ username: sampleUsername })
+
+      assert.isNull(stored)
     })
   })
 })
