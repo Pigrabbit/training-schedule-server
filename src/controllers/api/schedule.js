@@ -3,10 +3,10 @@ const WeeklyResponse = require('../../models/weeklyResponse.js')
 module.exports = {
   create: function (req, res) {
     if (!req.body || !req.body['member'] || !req.body['responses']) {
-      return res.send({
-        status: 422,
-        message: 'One or more required parameter is missing'
-      })
+      return res.status(422)
+        .send({
+          message: 'One or more required parameter is missing'
+        })
     }
 
     const weeklyResponse = new WeeklyResponse({
@@ -16,18 +16,16 @@ module.exports = {
 
     weeklyResponse.save(function (error) {
       if (error) {
-        console.log(error)
-        return res.send({
-          status: 500,
-          error: error
-        })
+        console.error(error)
+        return res.status(500)
+          .send({
+            error: error
+          })
       }
-      return res.send({
-        status: 200,
-        success: true,
-        message: 'Schedule submitted successfully!',
-        data: weeklyResponse
-      })
+      return res.status(200)
+        .send({
+          data: weeklyResponse
+        })
     })
   },
   fetch: function (req, res) {
