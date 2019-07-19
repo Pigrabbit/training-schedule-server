@@ -103,35 +103,30 @@ module.exports = {
     })
   },
   deleteByUsername: function (req, res) {
-    WeeklyResponse.findOneAndRemove({ member: req.params.username }, function (error) {
-      if (error) {
-        console.error(error)
-        return res.send({
-          status: 500,
-          error: error,
-          message: 'No response submitted with this username'
-        })
+    const query = { member: req.params.username }
+
+    WeeklyResponse.findOneAndRemove(query, function (err) {
+      if (err) {
+        console.error(err)
+        return res.status(500)
+          .send({
+            error: err,
+          })
       }
 
-      return res.send({
-        status: 200,
-        success: true
-      })
+      return res.status(200).send()
     })
   },
   deleteAll: function (req, res) {
-    WeeklyResponse.remove({}, function (error) {
-      if (error) {
-        return res.send({
-          status: 500,
-          error: error
-        })
+    WeeklyResponse.remove({}, function (err) {
+      if (err) {
+        return res.status(500)
+          .send({
+            error: err
+          })
       }
 
-      return res.send({
-        status: 200,
-        success: true
-      })
+      return res.status(200).send()
     })
   }
 }

@@ -94,7 +94,7 @@ describe('/schedule', () => {
       })
 
       describe('when responses parameter is missing or is null', () => {
-        it('is not able to create new weeklyResponse document', async() => {
+        it('is not able to create new weeklyResponse document', async () => {
           const response = await request(app)
             .post('/schedule')
             .send({
@@ -104,6 +104,44 @@ describe('/schedule', () => {
 
           assert.strictEqual(response.status, 422)
         })
+      })
+    })
+  })
+
+  describe('DELETE', () => {
+    beforeEach(async () => {
+      await mongoose.connect(databaseURL, options)
+      await mongoose.connection.db.dropDatabase()
+      await weeklyResponse.save()
+    })
+
+    afterEach(async () => {
+      await mongoose.disconnect()
+    })
+
+    describe('when user name is not given', () => {
+      it('delete every weeklyResponse document have submitted', async () => {
+        const response = await request(app)
+          .delete('/schedule')
+          .send()
+
+        const stored = await WeeklyResponse.find({})
+
+        assert.strictEqual(response.status, 200)
+        assert.isEmpty(stored)
+      })
+    })
+
+    describe('when username is given via request param', () => {
+      it('is able to delete weeklyResponse document from collection with username', async () => {
+        const response = await request(app)
+          .delete('/schedule/jinny')
+          .send()
+
+        const stored = await WeeklyResponse.findByUsername('jinny')
+
+        assert.strictEqual(response.status, 200)
+        assert.isEmpty(stored)
       })
     })
   })
