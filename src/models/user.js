@@ -36,8 +36,8 @@ const UserSchema = new Schema({
   }
 })
 
-UserSchema.statics.findByUsername = function (username) {
-  return this.findOne({ 'username': username })
+UserSchema.statics.findByUsername = function (username, callback) {
+  return this.findOne({ 'username': username }, callback)
 }
 
 UserSchema.statics.updateEmail = function (username, newEmail) {

@@ -100,7 +100,9 @@ describe('WeeklyResponse', () => {
       })
       await weeklyResponse.save()
 
-      const stored = await WeeklyResponse.findByUsername(memberName)
+      const stored = await WeeklyResponse.findByUsername(memberName, function () {
+        console.log('response loaded from db')
+      })
 
       assert.strictEqual(memberName, stored[0].member)
     })
@@ -124,7 +126,9 @@ describe('WeeklyResponse', () => {
       await weeklyResponseOfAnna.save()
       await weeklyResponseOfBen.save()
 
-      const stored = await WeeklyResponse.findByDateAndWillParticipate('2019-07-12', true)
+      const stored = await WeeklyResponse.findByDateAndWillParticipate('2019-07-12', true, function() {
+        console.log('response loaded from db')
+      })
 
       assert.include(stored[0], { member: 'Anna' })
       assert.include(stored[1], { member: 'Ben' })
@@ -151,7 +155,9 @@ describe('WeeklyResponse', () => {
     it('is able to delete the latest weeklyResponse by username', async () => {
       await WeeklyResponse.findOneAndDelete({ member: 'Jinny' })
 
-      const stored = await WeeklyResponse.findByUsername('Jinny')
+      const stored = await WeeklyResponse.findByUsername('Jinny', function () {
+        console.log('response loaded from db')
+      })
 
       assert.isEmpty(stored)
     })

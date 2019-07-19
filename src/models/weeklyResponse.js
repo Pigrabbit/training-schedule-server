@@ -18,11 +18,11 @@ const WeeklyResponseSchema = new Schema({
   }
 })
 
-WeeklyResponseSchema.statics.findByUsername = function (username) {
-  return this.find({ member: username })
+WeeklyResponseSchema.statics.findByUsername = function (username, callback) {
+  return this.find({ member: username }, callback)
 }
 
-WeeklyResponseSchema.statics.findByDateAndWillParticipate = function (date, willParticipate) {
+WeeklyResponseSchema.statics.findByDateAndWillParticipate = function (date, willParticipate, callback) {
   return this.aggregate([{
     $unwind: '$responses'
   }, {
@@ -30,7 +30,7 @@ WeeklyResponseSchema.statics.findByDateAndWillParticipate = function (date, will
       'responses.date': date,
       'responses.willParticipate': willParticipate
     }
-  }])
+  }], callback)
 }
 
 const WeeklyResponse = mongoose.model('WeeklyResponse', WeeklyResponseSchema)

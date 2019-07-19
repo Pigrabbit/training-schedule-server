@@ -140,7 +140,9 @@ describe('User', () => {
     })
 
     it('is able to get single user by username from collection', async () => {
-      const stored = await User.findByUsername(sampleUsername)
+      const stored = await User.findByUsername(sampleUsername, function () {
+        console.log('found the user in collection')
+      })
 
       assert.strictEqual(sampleUsername, stored.username)
     })
@@ -168,7 +170,9 @@ describe('User', () => {
       const newEmail = 'terry@newemail.com'
       await User.updateEmail(sampleUsername, newEmail)
 
-      const updated = await User.findByUsername(sampleUsername)
+      const updated = await User.findByUsername(sampleUsername, function () {
+        console.log('found the user in collection')
+      })
 
       assert.strictEqual(updated.email, newEmail)
     })
@@ -177,7 +181,9 @@ describe('User', () => {
       const newPassword = '0101010101'
       await User.updatePassword(sampleUsername, newPassword)
 
-      const updated = await User.findByUsername(sampleUsername)
+      const updated = await User.findByUsername(sampleUsername, function () {
+        console.log('found the user in collection')
+      })
 
       assert.strictEqual(updated.password, newPassword)
     })
@@ -204,7 +210,9 @@ describe('User', () => {
     it('is able to delete user with username', async () => {
       await User.findOneAndDelete({ username: sampleUsername })
 
-      const stored = await User.findOne({ username: sampleUsername })
+      const stored = await User.findOne({ username: sampleUsername }, function () {
+        console.log('Not able to find the user in collection')
+      })
 
       assert.isNull(stored)
     })

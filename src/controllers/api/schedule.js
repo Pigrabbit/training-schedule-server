@@ -54,14 +54,21 @@ module.exports = {
     const projection = 'member responses'
 
     WeeklyResponse.find(query, projection, function (error, responses) {
+      console.log(`here ${responses}`)
       if (error) {
         console.error(error)
         return res.send({
-          status: 404,
-          error: error,
-          message: 'no registered user as this username'
+          status: 404
         })
       }
+      if (responses.length === 0) {
+        return res.send({
+          status: 404,
+          error: error,
+          message: 'no schedule has been submitted from this user'
+        })
+      }
+
       return res.send({
         status: 200,
         success: true,
