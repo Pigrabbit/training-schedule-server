@@ -5,7 +5,6 @@ const app = require('../../../src/app')
 const mongoose = require('mongoose')
 mongoose.Promise = global.Promise
 
-const DailyResponse = require('../../../src/models/dailyResponse')
 const WeeklyResponse = require('../../../src/models/weeklyResponse')
 
 describe('/schedule', () => {
@@ -55,7 +54,6 @@ describe('/schedule', () => {
         .send()
 
       assert.strictEqual(response.status, 200)
-      assert.strictEqual(response.body.data[0].member, 'jinny')
     })
 
     it('returns error if schedule which has request username does not exist', async () => {
@@ -64,7 +62,7 @@ describe('/schedule', () => {
         .send()
 
       assert.strictEqual(response.status, 404)
-      assert.strictEqual(response.message, 'no schedule has been submitted from this user')
+      assert.strictEqual(response.body.message, 'No responses has been found')
     })
   })
 })

@@ -3,7 +3,7 @@ const schedule = require('../controllers/api/schedule')
 
 const router = express.Router()
 
-router.get('/schedule/:username', schedule.findByUsername)
+router.get('/schedule/:username', schedule.read)
 router.get('/schedule', schedule.fetch)
 router.post('/schedule', schedule.create)
 router.put('/schedule/:username', schedule.updateByUsername)

@@ -37,43 +37,41 @@ module.exports = {
     WeeklyResponse.find({}, function (error, weeklyResponses) {
       if (error) {
         console.error(error)
-        res.send({
-          status: 500,
-          error: error
-        })
       }
-      return res.send({
-        status: 200,
-        success: true,
-        data: weeklyResponses
-      })
+
+      if (weeklyResponses.length === 0) {
+        return res.status(404)
+          .send({
+            message: 'No response has been found'
+          })
+      }
+
+      return res.status(200)
+        .send({
+          success: true,
+          data: weeklyResponses
+        })
     }).sort({ _id: -1 })
   },
-  findByUsername: function (req, res) {
-    const query = { member: req.params.username }
-    const projection = 'member responses'
+  read: function (req, res) {
+    const member = req.params.username
 
-    WeeklyResponse.find(query, projection, function (error, responses) {
-      console.log(`here ${responses}`)
-      if (error) {
-        console.error(error)
-        return res.send({
-          status: 404
-        })
-      }
-      if (responses.length === 0) {
-        return res.send({
-          status: 404,
-          error: error,
-          message: 'no schedule has been submitted from this user'
-        })
+    WeeklyResponse.findByUsername(member, function (err, result) {
+      if (err) {
+        console.error(err)
       }
 
-      return res.send({
-        status: 200,
-        success: true,
-        data: responses
-      })
+      if (result.length === 0) {
+        return res.status(404)
+          .send({
+            message: 'No responses has been found'
+          })
+      }
+
+      return res.status(200)
+        .send({
+          data: result
+        })
     })
   },
   updateByUsername: function (req, res) {
