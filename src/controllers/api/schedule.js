@@ -14,6 +14,8 @@ module.exports = {
       responses: req.body['responses']
     })
 
+    console.log(weeklyResponse)
+
     weeklyResponse.save(function (error) {
       if (error) {
         console.error(error)
@@ -32,12 +34,12 @@ module.exports = {
     // if (!auth.isOwner(req, res)) {
     //   return res.status(401).send('login required')
     // }
-    WeeklyResponse.find({}, function (error, weeklyResponses) {
+    WeeklyResponse.find({}, function (error, doc) {
       if (error) {
         console.error(error)
       }
 
-      if (weeklyResponses.length === 0) {
+      if (doc.length === 0) {
         return res.status(404)
           .send({
             message: 'No response has been found'
@@ -47,7 +49,7 @@ module.exports = {
       return res.status(200)
         .send({
           success: true,
-          data: weeklyResponses
+          data: doc
         })
     }).sort({ _id: -1 })
   },
@@ -72,34 +74,43 @@ module.exports = {
         })
     })
   },
-  updateByUsername: function (req, res) {
+  update: function (req, res) {
     if (!req.body || !req.body['responses']) {
-      return res.send({
-        status: 422,
-        message: 'One or more required parameter is missing'
-      })
+      return res.status(422)
+        .send({
+          message: 'One or more required parameter is missing'
+        })
     }
 
-    const updatedResponse = req.body['responses']
+    const newResponses = req.body['responses']
 
     const query = { member: req.params.username }
-    const update = { responses: updatedResponse }
-    const option = { upsert: false }
+    const update = { responses: newResponses }
+    const option = {
+      upsert: false,
+      new: true
+    }
 
-    WeeklyResponse.findOneAndUpdate(query, update, option, function (error, responses) {
-      if (error) {
-        console.error(error)
-        return res.send({
-          status: 500,
-          error: error,
-          message: 'No response submitted with this username'
-        })
+    WeeklyResponse.findOneAndUpdate(query, update, option, function (err, doc) {
+      if (err) {
+        console.error(err)
+        return res.status(500)
+          .send({
+            error: err
+          })
       }
-      return res.send({
-        status: 200,
-        success: true,
-        data: updatedResponse
-      })
+
+      if (!doc) {
+        return res.status(404)
+          .send({
+            message: 'No response has been found'
+          })
+      }
+
+      return res.status(200)
+        .send({
+          data: newResponses
+        })
     })
   },
   deleteByUsername: function (req, res) {

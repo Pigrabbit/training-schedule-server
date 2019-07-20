@@ -152,14 +152,6 @@ describe('User', () => {
     beforeEach(async () => {
       await mongoose.connect(databaseURL, options)
       await mongoose.connection.db.dropDatabase()
-
-      const user = new User({
-        email: sampleEmail,
-        username: sampleUsername,
-        password: samplePassword
-      })
-
-      await user.save()
     })
 
     afterEach(async () => {
@@ -167,6 +159,13 @@ describe('User', () => {
     })
 
     it('is able to update user email with username', async () => {
+      const user = new User({
+        email: sampleEmail,
+        username: sampleUsername,
+        password: samplePassword
+      })
+      await user.save()
+
       const newEmail = 'terry@newemail.com'
       await User.updateEmail(sampleUsername, newEmail)
 
@@ -178,6 +177,13 @@ describe('User', () => {
     })
 
     it('is able to update password with username', async () => {
+      const user = new User({
+        email: sampleEmail,
+        username: sampleUsername,
+        password: samplePassword
+      })
+      await user.save()
+
       const newPassword = '0101010101'
       await User.updatePassword(sampleUsername, newPassword)
 
