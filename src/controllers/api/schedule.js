@@ -82,7 +82,7 @@ module.exports = {
         })
     }
   },
-  update: function (req, res) {
+  update: async function (req, res) {
     if (!req.body || !req.body['responses']) {
       return res.status(422)
         .send({
@@ -99,16 +99,10 @@ module.exports = {
       new: true
     }
 
-    WeeklyResponse.findOneAndUpdate(query, update, option, function (err, doc) {
-      if (err) {
-        console.error(err)
-        return res.status(500)
-          .send({
-            error: err
-          })
-      }
+    try {
+      const updatedReponse = await WeeklyResponse.findOneAndUpdate(query, update, option)
 
-      if (!doc) {
+      if (!updatedReponse) {
         return res.status(404)
           .send({
             message: 'No response has been found'
@@ -119,7 +113,13 @@ module.exports = {
         .send({
           data: newResponses
         })
-    })
+    } catch (err) {
+      console.error(err)
+      return res.status(500)
+        .send({
+          error: err
+        })
+    }
   },
   deleteByUsername: function (req, res) {
     const query = { member: req.params.username }
