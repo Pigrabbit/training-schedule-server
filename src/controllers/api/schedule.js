@@ -32,16 +32,14 @@ module.exports = {
         })
     }
   },
-  fetch: function (req, res) {
+  fetch: async function (req, res) {
     // if (!auth.isOwner(req, res)) {
     //   return res.status(401).send('login required')
     // }
-    WeeklyResponse.find({}, function (error, doc) {
-      if (error) {
-        console.error(error)
-      }
+    try {
+      const stored = await WeeklyResponse.find({})
 
-      if (doc.length === 0) {
+      if (stored.length === 0) {
         return res.status(404)
           .send({
             message: 'No response has been found'
@@ -50,19 +48,22 @@ module.exports = {
 
       return res.status(200)
         .send({
-          data: doc
+          data: stored
         })
-    }).sort({ _id: -1 })
+    } catch (err) {
+      console.log(err)
+      res.status(500)
+        .send({
+          error: err
+        })
+    }
   },
-  read: function (req, res) {
-    const member = req.params.username
+  read: async function (req, res) {
+    try {
+      const member = req.params.username
+      const stored = await WeeklyResponse.findByUsername(member)
 
-    WeeklyResponse.findByUsername(member, function (err, result) {
-      if (err) {
-        console.error(err)
-      }
-
-      if (result.length === 0) {
+      if (stored.length === 0) {
         return res.status(404)
           .send({
             message: 'No responses has been found'
@@ -71,9 +72,15 @@ module.exports = {
 
       return res.status(200)
         .send({
-          data: result
+          data: stored
         })
-    })
+    } catch (err) {
+      console.error(err)
+      res.status(500)
+        .send({
+          error: err
+        })
+    }
   },
   update: function (req, res) {
     if (!req.body || !req.body['responses']) {
