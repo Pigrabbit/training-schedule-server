@@ -1,7 +1,7 @@
 const WeeklyResponse = require('../../models/weeklyResponse.js')
 
 module.exports = {
-  create: function (req, res) {
+  create: async function (req, res) {
     if (!req.body || !req.body['member'] || !req.body['responses']) {
       return res.status(422)
         .send({
@@ -9,26 +9,28 @@ module.exports = {
         })
     }
 
-    const weeklyResponse = new WeeklyResponse({
-      member: req.body['member'],
-      responses: req.body['responses']
-    })
+    try {
+      const weeklyResponse = new WeeklyResponse({
+        member: req.body['member'],
+        responses: req.body['responses']
+      })
 
-    console.log(weeklyResponse)
+      console.log('before save')
+      const savedResponse = await weeklyResponse.save()
+      console.log('after save')
+      console.log(savedResponse)
 
-    weeklyResponse.save(function (error) {
-      if (error) {
-        console.error(error)
-        return res.status(500)
-          .send({
-            error: error
-          })
-      }
-      return res.status(200)
+      res.status(200)
         .send({
           data: weeklyResponse
         })
-    })
+    } catch (err) {
+      console.error(err)
+      res.status(500)
+        .send({
+          error: err
+        })
+    }
   },
   fetch: function (req, res) {
     // if (!auth.isOwner(req, res)) {
@@ -48,7 +50,6 @@ module.exports = {
 
       return res.status(200)
         .send({
-          success: true,
           data: doc
         })
     }).sort({ _id: -1 })
@@ -121,7 +122,7 @@ module.exports = {
         console.error(err)
         return res.status(500)
           .send({
-            error: err,
+            error: err
           })
       }
 
